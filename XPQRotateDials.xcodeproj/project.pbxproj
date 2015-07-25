@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E43ACB411B61CE7500237CFD /* XPQRotateDials.m in Sources */ = {isa = PBXBuildFile; fileRef = E43ACB401B61CE7500237CFD /* XPQRotateDials.m */; };
 		E476B54D1B6109BC00E72B4A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E476B54C1B6109BC00E72B4A /* main.m */; };
 		E476B5501B6109BC00E72B4A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E476B54F1B6109BC00E72B4A /* AppDelegate.m */; };
 		E476B5531B6109BC00E72B4A /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E476B5521B6109BC00E72B4A /* ViewController.m */; };
@@ -27,6 +28,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E43ACB3F1B61CE7500237CFD /* XPQRotateDials.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPQRotateDials.h; sourceTree = "<group>"; };
+		E43ACB401B61CE7500237CFD /* XPQRotateDials.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XPQRotateDials.m; sourceTree = "<group>"; };
 		E476B5471B6109BC00E72B4A /* XPQRotateDials.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XPQRotateDials.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E476B54B1B6109BC00E72B4A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E476B54C1B6109BC00E72B4A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -89,6 +92,8 @@
 				E476B5571B6109BC00E72B4A /* Images.xcassets */,
 				E476B5591B6109BC00E72B4A /* LaunchScreen.xib */,
 				E476B54A1B6109BC00E72B4A /* Supporting Files */,
+				E43ACB3F1B61CE7500237CFD /* XPQRotateDials.h */,
+				E43ACB401B61CE7500237CFD /* XPQRotateDials.m */,
 			);
 			path = XPQRotateDials;
 			sourceTree = "<group>";
@@ -219,6 +224,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E43ACB411B61CE7500237CFD /* XPQRotateDials.m in Sources */,
 				E476B5531B6109BC00E72B4A /* ViewController.m in Sources */,
 				E476B5501B6109BC00E72B4A /* AppDelegate.m in Sources */,
 				E476B54D1B6109BC00E72B4A /* main.m in Sources */,
@@ -352,6 +358,7 @@
 				INFOPLIST_FILE = XPQRotateDials/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -362,6 +369,7 @@
 				INFOPLIST_FILE = XPQRotateDials/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -418,6 +426,7 @@
 				E476B56C1B6109BC00E72B4A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		E476B56D1B6109BC00E72B4A /* Build configuration list for PBXNativeTarget "XPQRotateDialsTests" */ = {
 			isa = XCConfigurationList;
@@ -426,6 +435,7 @@
 				E476B56F1B6109BC00E72B4A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
