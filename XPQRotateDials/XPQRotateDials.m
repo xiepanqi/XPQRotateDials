@@ -9,13 +9,16 @@
 #import "XPQRotateDials.h"
 
 @interface XPQRotateDials () {
+    CGFloat _radii;
+    CGPoint _dialCenter;
     CGFloat _rulingWidth;
 }
 
 @property (nonatomic) CGFloat needleAngle;
 
-@property (nonatomic, strong) UIImageView *needleView;
-
+@property (nonatomic, weak) UIImageView *needleView;
+@property (nonatomic, weak) UIImageView *backgroundView;
+@property (nonatomic, weak) UILabel *valueLabel;
 @end
 
 @implementation XPQRotateDials
@@ -32,6 +35,7 @@
     self = [super initWithCoder:aDecoder];
     if (self) {
         [self configSelf];
+        [self adjustSubview];
     }
     return self;
 }
@@ -53,6 +57,7 @@
     _rulingCount = 10;
     _rulingTextColor = [UIColor blackColor];
     _rulingTextFont = [UIFont systemFontOfSize:20];
+    _showSubRuling = YES;
     _subRulingStartAngle = -225.0;
     _subRulingStopAngle = 45.0;
     _subRulingCount = 10;
@@ -61,15 +66,44 @@
     _warningValue = DBL_MAX;
     _animationEnable = YES;
     _animationTime = 1.0;
+    
+    UILabel *valueLabel = [[UILabel alloc] init];
+    valueLabel.textAlignment = NSTextAlignmentCenter;
+    valueLabel.textColor = [UIColor redColor];
+    [self addSubview:valueLabel];
+    self.valueLabel = valueLabel;
 }
 
 #pragma mark -属性
 -(void)setNeedleImage:(UIImage *)needleImage {
     _needleImage = needleImage;
-    self.needleView = [[UIImageView alloc] initWithImage:self.needleImage];
-    self.needleView.frame = self.bounds;
-    [self addSubview:self.needleView];
+    UIImageView *needleView = [[UIImageView alloc] initWithImage:needleImage];
+    needleView.frame = self.bounds;
+    [self addSubview:needleView];
+    self.needleView = needleView;
     self.value = self.minValue;
+}
+
+-(void)setBackgroundImage:(UIImage *)backgroundImage {
+    _backgroundImage = backgroundImage;
+    UIImageView *backgroundView = [[UIImageView alloc] initWithImage:backgroundImage];
+    backgroundView.frame = self.bounds;
+    [self addSubview:backgroundView];
+    self.backgroundView = backgroundView;
+    [self sendSubviewToBack:self.backgroundView];
+}
+
+-(void)setFrame:(CGRect)frame {
+    [super setFrame:frame];
+    
+    // 中心点
+    _dialCenter = CGPointMake(frame.size.width / 2, frame.size.height / 2);
+    // 半径
+    _radii = (frame.size.height < frame.size.width ? frame.size.height : frame.size.width) / 2;
+    // 根据图大小来计算刻度线宽度
+    _rulingWidth = _radii / 50;
+    
+    [self adjustSubview];
 }
 
 -(void)setValue:(CGFloat)value {
@@ -80,6 +114,7 @@
         value = self.minValue;
     }
     
+    self.valueLabel.text = [NSString stringWithFormat:@"%.1lf", value];
     self.needleAngle = [self angleWithValue:value];
 }
 
@@ -103,19 +138,14 @@
 
 #pragma mark -画图
 - (void)drawRect:(CGRect)rect {
-    // 根据图大小来计算刻度线宽度
-    _rulingWidth = (rect.size.height < rect.size.width ? rect.size.height : rect.size.width) / 100;
-    // 中心点
-    CGPoint center = CGPointMake(CGRectGetMidX(rect), CGRectGetMidY(rect));
-    // 半径
-    CGFloat radii = (rect.size.height < rect.size.width ? rect.size.height : rect.size.width) / 2;
-    
     CGContextRef context = UIGraphicsGetCurrentContext();
-    [self drawPuling:&context center:center radii:radii];
-    [self drawSubPuling:&context center:center radii:radii];
+    [self drawPuling:&context];
+    if (self.isShowSubRuling) {
+        [self drawSubPuling:&context];
+    }
 }
 
--(void)drawPuling:(CGContextRef *)context center:(CGPoint)center radii:(CGFloat)radii {
+-(void)drawPuling:(CGContextRef *)context{
     // 刻度之间的角度
     CGFloat angle = (self.rulingStopAngle - self.rulingStartAngle) / self.rulingCount;
     // 警告开始角度
@@ -123,14 +153,14 @@
     CGFloat warningIndex = (warningAngle - self.rulingStartAngle) / angle;
     
     // 画刻度线
-    [self drawAllPulingLine:context center:center radii:radii perAngle:angle warningIndex:ceil(warningIndex)];
+    [self drawAllPulingLine:context perAngle:angle warningIndex:ceil(warningIndex)];
     // 画刻度点
-    [self drawAllPulingPoint:context center:center radii:radii perAngle:angle warningIndex:ceil(warningIndex)];
+    [self drawAllPulingPoint:context perAngle:angle warningIndex:ceil(warningIndex)];
     // 画刻度文本
-    [self drawAllPulingText:context center:center radii:radii perAngle:angle warningIndex:ceil(warningIndex)];
+    [self drawAllPulingText:context perAngle:angle warningIndex:ceil(warningIndex)];
 }
 
--(void)drawSubPuling:(CGContextRef *)context center:(CGPoint)center radii:(CGFloat)radii {
+-(void)drawSubPuling:(CGContextRef *)context {
     static const float lineStartScale = 0.45;
     static const float lineEndScale = 0.40;
     static const float pointScale = 0.425;
@@ -144,18 +174,18 @@
     CGContextSetFillColorWithColor(*context, self.subRulingColor.CGColor);
     CGContextSetLineWidth(*context, _rulingWidth / 2);
     for (int i = 0; i <= self.subRulingCount; i++) {
-        [self drawPulingLine:context center:center radii:radii angle:((self.rulingStartAngle + i * angle) * M_PI / 180) pathStartScale:lineStartScale pathEndScale:lineEndScale];
+        [self drawPulingLine:context angle:((self.rulingStartAngle + i * angle) * M_PI / 180) pathStartScale:lineStartScale pathEndScale:lineEndScale];
     }
     CGContextStrokePath(*context);
     
     CGFloat startAngle = self.subRulingStartAngle + angle / 2;
     for (int i = 0; i < self.subRulingCount; i++) {
-        [self drawPulingPoint:context center:center radii:radii angle:((startAngle + i * angle) * M_PI / 180) pointSize:_rulingWidth / 2 pathScale:pointScale];
+        [self drawPulingPoint:context angle:((startAngle + i * angle) * M_PI / 180) pointSize:_rulingWidth / 2 pathScale:pointScale];
     }
     CGContextStrokePath(*context);
     
     for (int i = 0; i <= self.subRulingCount && i < self.subRulingText.count; i++) {
-        [self drawPulingText:context center:center radii:radii angle:((self.subRulingStartAngle + i * angle) * M_PI / 180) text:self.subRulingText[i] attributes:attributes textScale:textScale];
+        [self drawPulingText:context angle:((self.subRulingStartAngle + i * angle) * M_PI / 180) text:self.subRulingText[i] attributes:attributes textScale:textScale];
     }
     CGContextStrokePath(*context);
 }
@@ -167,14 +197,14 @@
  *  @param  perAngle    刻度线之间角度差
  *  @param  warningIndex    警告值开始的索引
  */
--(void)drawAllPulingLine:(CGContextRef *)context center:(CGPoint)center radii:(CGFloat)radii perAngle:(CGFloat)angle warningIndex:(int)warningIndex {
+-(void)drawAllPulingLine:(CGContextRef *)context perAngle:(CGFloat)angle warningIndex:(int)warningIndex {
     static const float pathStartScale = 0.85;
     static const float pathEndScale = 0.73;
     
     CGContextSetStrokeColorWithColor(*context, self.rulingLineColor.CGColor);
     CGContextSetLineWidth(*context, _rulingWidth);
     for (int i = 0; i <= self.rulingCount && i < warningIndex; i++) {
-        [self drawPulingLine:context center:center radii:radii angle:((self.rulingStartAngle + i * angle) * M_PI / 180) pathStartScale:pathStartScale pathEndScale:pathEndScale];
+        [self drawPulingLine:context angle:((self.rulingStartAngle + i * angle) * M_PI / 180) pathStartScale:pathStartScale pathEndScale:pathEndScale];
     }
     CGContextStrokePath(*context);
     // 警告值后的刻度
@@ -182,7 +212,7 @@
         CGContextSetStrokeColorWithColor(*context, [UIColor redColor].CGColor);
         CGContextSetLineWidth(*context, _rulingWidth);
         for (int i = warningIndex; i <= self.rulingCount; i++) {
-            [self drawPulingLine:context center:center radii:radii angle:((self.rulingStartAngle + i * angle) * M_PI / 180) pathStartScale:pathStartScale pathEndScale:pathEndScale];
+            [self drawPulingLine:context angle:((self.rulingStartAngle + i * angle) * M_PI / 180) pathStartScale:pathStartScale pathEndScale:pathEndScale];
         }
         CGContextStrokePath(*context);
     }
@@ -195,13 +225,13 @@
  *  @param  perAngle    刻度线之间角度差
  *  @param  warningIndex    警告值开始的索引
  */
--(void)drawAllPulingPoint:(CGContextRef *)context center:(CGPoint)center radii:(CGFloat)radii perAngle:(CGFloat)angle warningIndex:(int)warningIndex {
+-(void)drawAllPulingPoint:(CGContextRef *)context perAngle:(CGFloat)angle warningIndex:(int)warningIndex {
     static const float pathScale = 0.82;
     
     CGContextSetFillColorWithColor(*context, self.rulingPointColor.CGColor);
     CGFloat startAngle = self.rulingStartAngle + angle / 2;
     for (int i = 0; i < self.rulingCount && i < warningIndex; i++) {
-        [self drawPulingPoint:context center:center radii:radii angle:((startAngle + i * angle) * M_PI / 180) pointSize:_rulingWidth pathScale:pathScale];
+        [self drawPulingPoint:context angle:((startAngle + i * angle) * M_PI / 180) pointSize:_rulingWidth pathScale:pathScale];
     }
     CGContextStrokePath(*context);
     // 警告值后的刻度
@@ -209,7 +239,7 @@
         CGContextSetFillColorWithColor(*context, [UIColor redColor].CGColor);
         CGContextSetLineWidth(*context, _rulingWidth);
         for (int i = ceil(warningIndex); i < self.rulingCount; i++) {
-            [self drawPulingPoint:context center:center radii:radii angle:((startAngle + i * angle) * M_PI / 180) pointSize:_rulingWidth pathScale:pathScale];
+            [self drawPulingPoint:context angle:((startAngle + i * angle) * M_PI / 180) pointSize:_rulingWidth pathScale:pathScale];
         }
         CGContextStrokePath(*context);
     }
@@ -222,13 +252,13 @@
  *  @param  perAngle    刻度线之间角度差
  *  @param  warningIndex    警告值开始的索引
  */
--(void)drawAllPulingText:(CGContextRef *)context center:(CGPoint)center radii:(CGFloat)radii perAngle:(CGFloat)angle warningIndex:(int)warningIndex {
+-(void)drawAllPulingText:(CGContextRef *)context perAngle:(CGFloat)angle warningIndex:(int)warningIndex {
     static const float textScale = 0.60;
     
     NSDictionary *attributes = @{NSFontAttributeName:self.rulingTextFont, NSForegroundColorAttributeName:self.rulingTextColor};
     CGContextSetLineWidth(*context, _rulingWidth);
     for (int i = 0; i <= self.rulingCount && i < self.rulingText.count && i < warningIndex; i++) {
-        [self drawPulingText:context center:center radii:radii angle:((self.rulingStartAngle + i * angle) * M_PI / 180) text:self.rulingText[i] attributes:attributes textScale:textScale];
+        [self drawPulingText:context angle:((self.rulingStartAngle + i * angle) * M_PI / 180) text:self.rulingText[i] attributes:attributes textScale:textScale];
     }
     CGContextStrokePath(*context);
     // 警告值后的刻度
@@ -236,7 +266,7 @@
         attributes = @{NSFontAttributeName:self.rulingTextFont, NSForegroundColorAttributeName:[UIColor redColor]};
         CGContextSetLineWidth(*context, _rulingWidth);
         for (int i = ceil(warningIndex); i <= self.rulingCount && i < self.rulingText.count; i++) {
-            [self drawPulingText:context center:center radii:radii angle:((self.rulingStartAngle + i * angle) * M_PI / 180) text:self.rulingText[i] attributes:attributes textScale:textScale];
+            [self drawPulingText:context angle:((self.rulingStartAngle + i * angle) * M_PI / 180) text:self.rulingText[i] attributes:attributes textScale:textScale];
         }
         CGContextStrokePath(*context);
     }
@@ -251,17 +281,17 @@
  *  @param  pathStartScale  刻度线所在位置比例，既在半径上的百分比
  *  @param  pathEndScale    pathStartScale必须大于pathEndScale，不然会有误差
  */
-- (void)drawPulingLine:(CGContextRef *)context center:(CGPoint)center radii:(CGFloat)radii angle:(CGFloat)angle pathStartScale:(CGFloat)pathStartScale pathEndScale:(CGFloat)pathEndScale {
+- (void)drawPulingLine:(CGContextRef *)context angle:(CGFloat)angle pathStartScale:(CGFloat)pathStartScale pathEndScale:(CGFloat)pathEndScale {
     // 因为画线的点是画线的左侧点，会有一点偏差，这里纠正过来
-    CGFloat offset = asin((_rulingWidth / 2) / (pathStartScale * radii));
+    CGFloat offset = asin((_rulingWidth / 2) / (pathStartScale * _radii));
     angle += offset;
     
     // 计算刻度线两端的点
     // 计算公式为：所在比例 * cos或者sin * 半径 + 中心点x或者y
-    CGFloat x1 = pathStartScale * cos(angle) * radii + center.x;
-    CGFloat y1 = pathStartScale * sin(angle) * radii + center.x;
-    CGFloat x2 = pathEndScale * cos(angle) * radii + center.x;
-    CGFloat y2 = pathEndScale * sin(angle) * radii + center.x;
+    CGFloat x1 = pathStartScale * cos(angle) * _radii + _dialCenter.x;
+    CGFloat y1 = pathStartScale * sin(angle) * _radii + _dialCenter.x;
+    CGFloat x2 = pathEndScale * cos(angle) * _radii + _dialCenter.x;
+    CGFloat y2 = pathEndScale * sin(angle) * _radii + _dialCenter.x;
     CGContextMoveToPoint(*context, x1, y1);
     CGContextAddLineToPoint(*context, x2, y2);
 }
@@ -274,11 +304,11 @@
  *  @param  angle   刻度点所在角度
  *  @param  pathScale   刻度点中心所在半径上的百分比
  */
-- (void)drawPulingPoint:(CGContextRef *)context center:(CGPoint)center radii:(CGFloat)radii angle:(CGFloat)angle pointSize:(CGFloat)pointSize pathScale:(CGFloat)pathScale {
+- (void)drawPulingPoint:(CGContextRef *)context angle:(CGFloat)angle pointSize:(CGFloat)pointSize pathScale:(CGFloat)pathScale {
     // 计算刻度点的中心
     // 计算公式为：所在比例 * cos或者sin * 半径 + 中心点x或者y
-    CGFloat x = pathScale * cos(angle) * radii + center.x;
-    CGFloat y = pathScale * sin(angle) * radii + center.y;
+    CGFloat x = pathScale * cos(angle) * _radii + _dialCenter.x;
+    CGFloat y = pathScale * sin(angle) * _radii + _dialCenter.y;
     CGContextMoveToPoint(*context, x, y);
     CGContextAddArc(*context, x, y, pointSize, 0, 2 * M_PI, 0);
     CGContextDrawPath(*context, kCGPathFill);//绘制填充
@@ -294,17 +324,25 @@
  *  @param  attributes  富文本属性
  *  @param  textScale   刻度文本中心所在半径上的百分比
  */
-- (void)drawPulingText:(CGContextRef *)context center:(CGPoint)center radii:(CGFloat)radii angle:(CGFloat)angle text:(NSString *)text attributes:(NSDictionary *)attributes textScale:(CGFloat)textScale {
+- (void)drawPulingText:(CGContextRef *)context angle:(CGFloat)angle text:(NSString *)text attributes:(NSDictionary *)attributes textScale:(CGFloat)textScale {
     // 计算文本需要占的大小
     CGSize textSize = [text sizeWithAttributes:attributes];
     // 计算文本的左上角位置
-    CGFloat x = textScale * cos(angle) * radii + center.x - textSize.width / 2;
-    CGFloat y = textScale * sin(angle) * radii + center.y - textSize.height / 2;
+    CGFloat x = textScale * cos(angle) * _radii + _dialCenter.x - textSize.width / 2;
+    CGFloat y = textScale * sin(angle) * _radii + _dialCenter.y - textSize.height / 2;
     
     [text drawAtPoint:CGPointMake(x, y) withAttributes:attributes];
 }
 
 #pragma mark -辅助函数
+// 调整子视图位置
+-(void)adjustSubview {
+    CGRect rect = CGRectMake(_dialCenter.x - _radii, _dialCenter.y - _radii, 2 * _radii, 2 * _radii);
+    self.backgroundView.frame = rect;
+    self.needleView.frame = rect;
+    self.valueLabel.frame = CGRectMake(0.75 * _radii, 1.44 * _radii, 0.5 * _radii, 0.28 * _radii);
+}
+
 // 值转成角度
 -(CGFloat)angleWithValue:(CGFloat)value {
     CGFloat rangVale = self.maxValue - self.minValue;
