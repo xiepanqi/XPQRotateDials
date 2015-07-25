@@ -47,7 +47,7 @@
                                         <real key="value" value="0.0"/>
                                     </userDefinedRuntimeAttribute>
                                     <userDefinedRuntimeAttribute type="number" keyPath="maxValue">
-                                        <real key="value" value="140"/>
+                                        <real key="value" value="70"/>
                                     </userDefinedRuntimeAttribute>
                                     <userDefinedRuntimeAttribute type="number" keyPath="value">
                                         <real key="value" value="0.0"/>
@@ -68,10 +68,10 @@
                                         <color key="value" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </userDefinedRuntimeAttribute>
                                     <userDefinedRuntimeAttribute type="number" keyPath="rulingCount">
-                                        <integer key="value" value="14"/>
+                                        <integer key="value" value="7"/>
                                     </userDefinedRuntimeAttribute>
                                     <userDefinedRuntimeAttribute type="number" keyPath="warningValue">
-                                        <real key="value" value="100"/>
+                                        <real key="value" value="55"/>
                                     </userDefinedRuntimeAttribute>
                                     <userDefinedRuntimeAttribute type="number" keyPath="subRulingStartAngle">
                                         <real key="value" value="-225"/>
@@ -90,6 +90,11 @@
                                     <userDefinedRuntimeAttribute type="number" keyPath="animationTime">
                                         <real key="value" value="1"/>
                                     </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="title" value="RPM"/>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="rulingUnit" value="x100/min"/>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="subRulingUnit" value="Km/h"/>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="showSubRuling" value="NO"/>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="animationEnable" value="YES"/>
                                 </userDefinedRuntimeAttributes>
                             </view>
                         </subviews>

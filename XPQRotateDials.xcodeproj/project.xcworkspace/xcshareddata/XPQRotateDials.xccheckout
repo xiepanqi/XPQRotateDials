@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>C43195B0-2AC6-4D3A-AE39-381B34AB228B</string>
+	<key>IDESourceControlProjectName</key>
+	<string>XPQRotateDials</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>EFAEACFAF6D2BC711F08EE5FA05C39825CF33B96</key>
+		<string>https://github.com/xiepanqi/XPQRotateDials.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>XPQRotateDials.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>EFAEACFAF6D2BC711F08EE5FA05C39825CF33B96</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/xiepanqi/XPQRotateDials.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>EFAEACFAF6D2BC711F08EE5FA05C39825CF33B96</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>EFAEACFAF6D2BC711F08EE5FA05C39825CF33B96</string>
+			<key>IDESourceControlWCCName</key>
+			<string>XPQRotateDials</string>
+		</dict>
+	</array>
+</dict>
+</plist>

@@ -23,6 +23,8 @@
 @property (nonatomic) IBInspectable CGFloat rulingStopAngle;
 /// 刻度数量,默认10（除开其实刻度，也就是说如果该质为10则实际有11个刻度）
 @property (nonatomic) IBInspectable NSUInteger rulingCount;
+/// 刻度单位，默认nil
+@property (nonatomic, strong) IBInspectable NSString *rulingUnit;
 /// 刻度线颜色，默认黑色
 @property (nonatomic, strong) IBInspectable UIColor *rulingLineColor;
 /// 刻度点颜色，默认黑色
@@ -45,6 +47,8 @@
 @property (nonatomic) IBInspectable CGFloat subRulingStopAngle;
 /// 内圈刻度数量,默认10
 @property (nonatomic) IBInspectable NSUInteger subRulingCount;
+/// 内圈刻度单位，默认nil
+@property (nonatomic, strong) IBInspectable NSString *subRulingUnit;
 /// 内圈刻度线和刻度点颜色，默认黑色
 @property (nonatomic, strong) IBInspectable UIColor *subRulingColor;
 /// 内圈刻度文字颜色，默认黑色
@@ -65,8 +69,13 @@
 @property (nonatomic,getter=isAnimationEnable) IBInspectable BOOL animationEnable;
 /// 指针移动动画时间，默认1.0
 @property (nonatomic) IBInspectable CGFloat animationTime;
+#pragma mark - 标题
 /// 表盘标题,默认nil
 @property (nonatomic, strong) IBInspectable NSString *title;
+/// 标题颜色，默认白色
+@property (nonatomic, strong) IBInspectable UIColor *titleColor;
+/// 标题字体，默认[UIFont systemFontOfSize:20]
+@property (nonatomic, strong) UIFont *titleFont;
 
 /*
  * @brief   值转化成指针对应的角度
