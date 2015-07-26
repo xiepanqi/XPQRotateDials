@@ -17,7 +17,6 @@
 @property (nonatomic) CGFloat needleAngle;
 
 @property (nonatomic, weak) UIImageView *needleView;
-@property (nonatomic, weak) UIImageView *backgroundView;
 @property (nonatomic, weak) UILabel *valueLabel;
 @end
 
@@ -58,12 +57,15 @@
     _rulingTextColor = [UIColor blackColor];
     _rulingTextFont = [UIFont systemFontOfSize:20];
     _showSubRuling = YES;
+    _subMinValue = 0.0;
+    _subMaxValue = 1.0;
     _subRulingStartAngle = -225.0;
     _subRulingStopAngle = 45.0;
     _subRulingCount = 10;
     _subRulingTextColor = [UIColor blackColor];
     _subRulingTextFont = [UIFont systemFontOfSize:10];
     _warningValue = DBL_MAX;
+    _warningWiggleEnable = YES;
     _animationEnable = YES;
     _animationTime = 1.0;
     _titleColor = [UIColor whiteColor];
@@ -74,25 +76,23 @@
     valueLabel.textColor = [UIColor redColor];
     [self addSubview:valueLabel];
     self.valueLabel = valueLabel;
+    
+    UIImageView *needleView = [[UIImageView alloc] initWithImage:_needleImage];
+    needleView.frame = CGRectMake(_dialCenter.x - _radii, _dialCenter.y - _radii, 2 * _radii, 2 * _radii);
+    [self addSubview:needleView];
+    self.needleView = needleView;
 }
 
 #pragma mark -属性
 -(void)setNeedleImage:(UIImage *)needleImage {
     _needleImage = needleImage;
-    UIImageView *needleView = [[UIImageView alloc] initWithImage:needleImage];
-    needleView.frame = self.bounds;
-    [self addSubview:needleView];
-    self.needleView = needleView;
+    self.needleView.image = needleImage;
     self.value = self.minValue;
 }
 
 -(void)setBackgroundImage:(UIImage *)backgroundImage {
     _backgroundImage = backgroundImage;
-    UIImageView *backgroundView = [[UIImageView alloc] initWithImage:backgroundImage];
-    backgroundView.frame = self.bounds;
-    [self addSubview:backgroundView];
-    self.backgroundView = backgroundView;
-    [self sendSubviewToBack:self.backgroundView];
+    self.backgroundColor = [UIColor colorWithPatternImage:[self reSizeImage:backgroundImage toSize:self.bounds.size]];
 }
 
 -(void)setFrame:(CGRect)frame {
@@ -116,12 +116,29 @@
         value = self.minValue;
     }
     
+    if (self.isWarningWiggleEnable) {
+        if (value > self.warningValue) {
+            [self startWiggleAnimationView:self.needleView];
+        }
+        else {
+            [self stopWiggleAnimationView:self.needleView];
+        }
+    }
+    
     self.valueLabel.text = [NSString stringWithFormat:@"%.1lf", value];
     self.needleAngle = [self angleWithValue:value];
 }
 
 -(CGFloat)value {
     return [self valueWithAngle:_needleAngle];
+}
+
+-(void)setSubValue:(CGFloat)subValue {
+    self.value = subValue / (self.subMaxValue - self.subMinValue) * (self.maxValue - self.minValue);
+}
+
+-(CGFloat)subValue {
+    return [self subValueWithSubAngle:_needleAngle];
 }
 
 -(void)setNeedleAngle:(CGFloat)needleAngle {
@@ -314,9 +331,9 @@
     // 计算刻度线两端的点
     // 计算公式为：所在比例 * cos或者sin * 半径 + 中心点x或者y
     CGFloat x1 = pathStartScale * cos(angle) * _radii + _dialCenter.x;
-    CGFloat y1 = pathStartScale * sin(angle) * _radii + _dialCenter.x;
+    CGFloat y1 = pathStartScale * sin(angle) * _radii + _dialCenter.y;
     CGFloat x2 = pathEndScale * cos(angle) * _radii + _dialCenter.x;
-    CGFloat y2 = pathEndScale * sin(angle) * _radii + _dialCenter.x;
+    CGFloat y2 = pathEndScale * sin(angle) * _radii + _dialCenter.y;
     CGContextMoveToPoint(*context, x1, y1);
     CGContextAddLineToPoint(*context, x2, y2);
 }
@@ -360,14 +377,25 @@
 }
 
 #pragma mark -辅助函数
-// 调整子视图位置
--(void)adjustSubview {
-    CGRect rect = CGRectMake(_dialCenter.x - _radii, _dialCenter.y - _radii, 2 * _radii, 2 * _radii);
-    self.backgroundView.frame = rect;
-    self.needleView.frame = rect;
-    self.valueLabel.frame = CGRectMake(0.75 * _radii, 1.44 * _radii, 0.5 * _radii, 0.28 * _radii);
+- (UIImage *)reSizeImage:(UIImage *)image toSize:(CGSize)reSize
+
+{
+    UIGraphicsBeginImageContext(CGSizeMake(reSize.width, reSize.height));
+    [image drawInRect:CGRectMake(0, 0, reSize.width, reSize.height)];
+    UIImage *reSizeImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    return reSizeImage;
+    
 }
 
+// 调整子视图位置
+-(void)adjustSubview {
+    self.needleView.frame = CGRectMake(_dialCenter.x - _radii, _dialCenter.y - _radii, 2 * _radii, 2 * _radii);
+    self.valueLabel.frame = CGRectMake(_dialCenter.x - 0.25 * _radii, _dialCenter.y + 0.44 * _radii, 0.5 * _radii, 0.28 * _radii);
+}
+
+#pragma mark - 数值转换函数
 // 值转成角度
 -(CGFloat)angleWithValue:(CGFloat)value {
     CGFloat rangVale = self.maxValue - self.minValue;
@@ -380,6 +408,18 @@
     CGFloat rangVale = self.maxValue - self.minValue;
     CGFloat rangAngle = self.rulingStopAngle - self.rulingStartAngle;
     return (angle - self.rulingStartAngle) / rangAngle * rangVale + self.minValue;
+}
+
+-(CGFloat)subAngleWithSubValue:(CGFloat)value {
+    CGFloat rangVale = self.subMaxValue - self.subMinValue;
+    CGFloat rangAngle = self.subRulingStopAngle - self.subRulingStartAngle;
+    return (value - self.subMinValue) / rangVale * rangAngle + self.subRulingStartAngle;
+}
+
+-(CGFloat)subValueWithSubAngle:(CGFloat)angle {
+    CGFloat rangVale = self.subMaxValue - self.subMinValue;
+    CGFloat rangAngle = self.subRulingStopAngle - self.subRulingStartAngle;
+    return (angle - self.subRulingStartAngle) / rangAngle * rangVale + self.subMinValue;
 }
 
 #pragma mark -动画
@@ -409,5 +449,20 @@
         self.needleView.transform = CGAffineTransformMakeRotation(newAngle * M_PI / 180);
         [UIView commitAnimations];
     }
+}
+
+-(void)startWiggleAnimationView:(UIView *)view {
+    CATransform3D transform = CATransform3DRotate(view.layer.transform, -0.05, 0, 0, 1.0);
+    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"transform"];
+    animation.toValue = [NSValue valueWithCATransform3D:transform];
+    animation.autoreverses = YES;
+    animation.duration = 0.05;   //间隔时间
+    animation.repeatCount = FLT_MAX;   //重复的次数
+    animation.delegate = self;
+    [view.layer addAnimation:animation forKey:@"wiggleAnimation"];
+}
+
+-(void)stopWiggleAnimationView:(UIView *)view {
+    [view.layer removeAnimationForKey:@"wiggleAnimation"];
 }
 @end

@@ -16,38 +16,15 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="200" translatesAutoresizingMaskIntoConstraints="NO" id="Zww-Tv-sWw">
-                                <rect key="frame" x="14" y="457" width="260" height="31"/>
-                                <connections>
-                                    <action selector="sliderChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="rlI-l9-I6r"/>
-                                </connections>
-                            </slider>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Cmm-Lz-PrN">
-                                <rect key="frame" x="138" y="401" width="134" height="30"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" keyboardType="numbersAndPunctuation"/>
-                                <connections>
-                                    <action selector="textEditEnd:" destination="BYZ-38-t0r" eventType="editingDidEnd" id="sgE-Jf-B9g"/>
-                                </connections>
-                            </textField>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rnq-KJ-i9M">
-                                <rect key="frame" x="43" y="400" width="54" height="30"/>
-                                <state key="normal" title="清零">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="clickButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Mly-r6-4Yj"/>
-                                </connections>
-                            </button>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="F2H-Ur-4bk" customClass="XPQRotateDials">
-                                <rect key="frame" x="43" y="59" width="256" height="256"/>
-                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <rect key="frame" x="22" y="28" width="256" height="256"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="minValue">
                                         <real key="value" value="0.0"/>
                                     </userDefinedRuntimeAttribute>
                                     <userDefinedRuntimeAttribute type="number" keyPath="maxValue">
-                                        <real key="value" value="70"/>
+                                        <real key="value" value="140"/>
                                     </userDefinedRuntimeAttribute>
                                     <userDefinedRuntimeAttribute type="number" keyPath="value">
                                         <real key="value" value="0.0"/>
@@ -68,10 +45,10 @@
                                         <color key="value" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </userDefinedRuntimeAttribute>
                                     <userDefinedRuntimeAttribute type="number" keyPath="rulingCount">
-                                        <integer key="value" value="7"/>
+                                        <integer key="value" value="14"/>
                                     </userDefinedRuntimeAttribute>
                                     <userDefinedRuntimeAttribute type="number" keyPath="warningValue">
-                                        <real key="value" value="55"/>
+                                        <real key="value" value="100"/>
                                     </userDefinedRuntimeAttribute>
                                     <userDefinedRuntimeAttribute type="number" keyPath="subRulingStartAngle">
                                         <real key="value" value="-225"/>
@@ -88,17 +65,47 @@
                                     <userDefinedRuntimeAttribute type="image" keyPath="needleImage" value="needle_mph"/>
                                     <userDefinedRuntimeAttribute type="image" keyPath="backgroundImage" value="background"/>
                                     <userDefinedRuntimeAttribute type="number" keyPath="animationTime">
-                                        <real key="value" value="1"/>
+                                        <real key="value" value="0.5"/>
                                     </userDefinedRuntimeAttribute>
                                     <userDefinedRuntimeAttribute type="string" keyPath="title" value="RPM"/>
-                                    <userDefinedRuntimeAttribute type="string" keyPath="rulingUnit" value="x100/min"/>
+                                    <userDefinedRuntimeAttribute type="string" keyPath="rulingUnit" value="mi/h"/>
                                     <userDefinedRuntimeAttribute type="string" keyPath="subRulingUnit" value="Km/h"/>
-                                    <userDefinedRuntimeAttribute type="boolean" keyPath="showSubRuling" value="NO"/>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="showSubRuling" value="YES"/>
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="animationEnable" value="YES"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="subMinValue">
+                                        <real key="value" value="0.0"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="subMaxValue">
+                                        <real key="value" value="220"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="warningWiggleEnable" value="YES"/>
                                 </userDefinedRuntimeAttributes>
                             </view>
+                            <slider opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="200" translatesAutoresizingMaskIntoConstraints="NO" id="Zww-Tv-sWw">
+                                <rect key="frame" x="14" y="533" width="260" height="31"/>
+                                <connections>
+                                    <action selector="sliderChanged:" destination="BYZ-38-t0r" eventType="valueChanged" id="rlI-l9-I6r"/>
+                                </connections>
+                            </slider>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Cmm-Lz-PrN">
+                                <rect key="frame" x="138" y="477" width="134" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numbersAndPunctuation"/>
+                                <connections>
+                                    <action selector="textEditEnd:" destination="BYZ-38-t0r" eventType="editingDidEnd" id="sgE-Jf-B9g"/>
+                                </connections>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rnq-KJ-i9M">
+                                <rect key="frame" x="43" y="476" width="54" height="30"/>
+                                <state key="normal" title="清零">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="clickButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Mly-r6-4Yj"/>
+                                </connections>
+                            </button>
                         </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <connections>
                         <outlet property="rotateDials" destination="F2H-Ur-4bk" id="X13-jd-PAv"/>

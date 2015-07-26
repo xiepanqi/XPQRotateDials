@@ -37,8 +37,16 @@
 @property (nonatomic, strong) NSArray *rulingText;
 /// 警告阀值,只对主刻度有效，次刻度无效,默认DBL_MAX
 @property (nonatomic) IBInspectable CGFloat warningValue;
+/// 警告抖动使能，默认YES
+@property (nonatomic, getter=isWarningWiggleEnable) IBInspectable BOOL warningWiggleEnable;
 
 #pragma mark - 次刻度属性
+/// 内圈最小值,默认0.0
+@property (nonatomic) IBInspectable CGFloat subMinValue;
+/// 内圈最大值，默认1.0
+@property (nonatomic) IBInspectable CGFloat subMaxValue;
+/// 内圈值，无默认值
+@property (nonatomic) CGFloat subValue;
 /// 是否显示次刻度
 @property (nonatomic, getter=isShowSubRuling) IBInspectable BOOL showSubRuling;
 /// 内圈刻度开始角度，默认-225.0°
@@ -61,7 +69,7 @@
 #pragma mark - 指针属性
 /// 指针图片，默认nil
 @property (nonatomic, strong) IBInspectable UIImage *needleImage;
-/// 背景图片,这其实不是真正的背景，是在刻度与指针之间的一个图层，这个图层可以做点处理让刻度盘看起来更有层次感。如果要使用正在的背景只能在父视图上加。默认nil
+/// 背景图片,默认nil
 @property (nonatomic, strong) IBInspectable UIImage *backgroundImage;
 
 #pragma mark - 动画属性
@@ -78,16 +86,34 @@
 @property (nonatomic, strong) UIFont *titleFont;
 
 /*
- * @brief   值转化成指针对应的角度
+ * @brief   值转化成指针对应的角度。
+            注意：必须要设定好minValue、maxValue、rulingStartAngle、rulingStopAngle此函数才可用，不然得到的结果将不正确。
  * @param   value   要转换的值
  * @return  转换后的角度
  */
 -(CGFloat)angleWithValue:(CGFloat)value;
 
 /*
- * @brief   指针的角度转换成对应的值
+ * @brief   指针的角度转换成对应的值。
+            注意：必须要设定好minValue、maxValue、rulingStartAngle、rulingStopAngle此函数才可用，不然得到的结果将不正确。
  * @param   value   要转换的角度
  * @return  转换后的值
  */
 -(CGFloat)valueWithAngle:(CGFloat)angle;
+
+/*
+ * @brief   内圈值转化成内圈指针对应的角度
+            注意：必须要设定好subMinValue、subMaxValue、subRulingStartAngle、subRulingStopAngle此函数才可用，不然得到的结果将不正确。
+ * @param   value   要转换的内圈值
+ * @return  转换后的内圈角度
+ */
+-(CGFloat)subAngleWithSubValue:(CGFloat)value;
+
+/*
+ * @brief   内圈指针的角度转换成对应的内圈值
+            注意：必须要设定好subMinValue、subMaxValue、subRulingStartAngle、subRulingStopAngle此函数才可用，不然得到的结果将不正确。
+ * @param   value   要转换的内圈角度
+ * @return  转换后的内圈值
+ */
+-(CGFloat)subValueWithSubAngle:(CGFloat)angle;
 @end
