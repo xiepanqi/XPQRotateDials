@@ -78,7 +78,6 @@
     self.valueLabel = valueLabel;
     
     UIImageView *needleView = [[UIImageView alloc] initWithImage:_needleImage];
-    needleView.frame = CGRectMake(_dialCenter.x - _radii, _dialCenter.y - _radii, 2 * _radii, 2 * _radii);
     [self addSubview:needleView];
     self.needleView = needleView;
 }
@@ -92,7 +91,7 @@
 
 -(void)setBackgroundImage:(UIImage *)backgroundImage {
     _backgroundImage = backgroundImage;
-    self.backgroundColor = [UIColor colorWithPatternImage:[self reSizeImage:backgroundImage toSize:self.bounds.size]];
+    self.backgroundColor = [UIColor colorWithPatternImage:[self adjustImageSize:backgroundImage]];
 }
 
 -(void)setFrame:(CGRect)frame {
@@ -157,6 +156,8 @@
 
 #pragma mark -画图
 - (void)drawRect:(CGRect)rect {
+    [super drawRect:rect];
+    
     CGContextRef context = UIGraphicsGetCurrentContext();
     [self drawRuling:&context];
     if (self.isShowSubRuling) {
@@ -377,15 +378,18 @@
 }
 
 #pragma mark -辅助函数
-- (UIImage *)reSizeImage:(UIImage *)image toSize:(CGSize)reSize
-
-{
-    UIGraphicsBeginImageContext(CGSizeMake(reSize.width, reSize.height));
-    [image drawInRect:CGRectMake(0, 0, reSize.width, reSize.height)];
-    UIImage *reSizeImage = UIGraphicsGetImageFromCurrentImageContext();
+- (UIImage *)adjustImageSize:(UIImage *)image {
+    // 创建一个bitmap的context
+    // 并把它设置成为当前正在使用的context
+    UIGraphicsBeginImageContext(self.bounds.size);
+    // 绘制改变大小的图片
+    [image drawInRect:CGRectMake(_dialCenter.x - _radii, _dialCenter.y - _radii, 2 * _radii, 2 * _radii)];
+    // 从当前context中创建一个改变大小后的图片
+    UIImage* scaledImage = UIGraphicsGetImageFromCurrentImageContext();
+    // 使当前的context出堆栈
     UIGraphicsEndImageContext();
-    
-    return reSizeImage;
+    // 返回新的改变大小后的图片
+    return scaledImage;
     
 }
 
