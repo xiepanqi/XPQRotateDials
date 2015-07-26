@@ -145,9 +145,12 @@
     
     if (self.isWarningWiggleEnable) {
         if (value > self.warningValue) {
-            [self startWiggleAnimationView:self.needleView];
+            // 这里如果不采用延时调用启动动画，而是直接在动画里设置延时参数的画，则会在旋转读书大于180°时第一段动画无法执行。
+            [self performSelector:@selector(startWiggleAnimationView:) withObject:self.needleView afterDelay:self.animationTime];
+//            [self startWiggleAnimationView:self.needleView];
         }
         else {
+            [[self class] cancelPreviousPerformRequestsWithTarget:self selector:@selector(startWiggleAnimationView:) object:self.needleView];
             [self stopWiggleAnimationView:self.needleView];
         }
     }
@@ -470,14 +473,14 @@
         // UIView的旋转动画会自动选择小角度旋转，所以大于180度角的分两段执行
         CGFloat anlge1 = newAngle < oldAngle ? 180.1 : 179.9;
         CGFloat time1 = anlge1 / stepAngle * self.animationTime;
-        [UIView beginAnimations:@"rotation" context:NULL];
+        [UIView beginAnimations:@"rotation1" context:NULL];
         [UIView setAnimationDuration:time1];
         [UIView setAnimationCurve:UIViewAnimationCurveEaseIn];
         self.needleView.transform = CGAffineTransformMakeRotation((oldAngle + anlge1) * M_PI / 180);
         [UIView commitAnimations];
         
         
-        [UIView beginAnimations:@"rotation" context:NULL];
+        [UIView beginAnimations:@"rotation2" context:NULL];
         [UIView setAnimationDelay:time1];
         [UIView setAnimationDuration:self.animationTime - time1];
         [UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
