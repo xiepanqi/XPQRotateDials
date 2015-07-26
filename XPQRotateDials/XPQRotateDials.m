@@ -18,6 +18,7 @@
 
 @property (nonatomic, weak) UIImageView *needleView;
 @property (nonatomic, weak) UILabel *valueLabel;
+@property (nonatomic, weak) UIImageView *titleImageView;
 @end
 
 @implementation XPQRotateDials
@@ -48,6 +49,11 @@
 }
 
 - (void)configSelf {
+    [self configParam];
+    [self configSubview];
+}
+
+-(void)configParam {
     // 初始值
     _minValue = 0.0;
     _maxValue = 1.0;
@@ -70,7 +76,9 @@
     _animationTime = 1.0;
     _titleColor = [UIColor whiteColor];
     _titleFont = [UIFont systemFontOfSize:20];
-    
+}
+
+-(void)configSubview {
     UILabel *valueLabel = [[UILabel alloc] init];
     valueLabel.textAlignment = NSTextAlignmentCenter;
     valueLabel.textColor = [UIColor redColor];
@@ -78,6 +86,7 @@
     self.valueLabel = valueLabel;
     
     UIImageView *needleView = [[UIImageView alloc] initWithImage:_needleImage];
+    needleView.frame = CGRectMake(_dialCenter.x - _radii, _dialCenter.y - _radii, 2 * _radii, 2 * _radii);
     [self addSubview:needleView];
     self.needleView = needleView;
 }
@@ -92,6 +101,25 @@
 -(void)setBackgroundImage:(UIImage *)backgroundImage {
     _backgroundImage = backgroundImage;
     self.backgroundColor = [UIColor colorWithPatternImage:[self adjustImageSize:backgroundImage]];
+}
+
+-(void)setTitleImage:(UIImage *)titleImage {
+    _titleImage = titleImage;
+    if (titleImage == nil) {
+        if (self.titleImageView != nil) {
+            [self.titleImageView removeFromSuperview];
+        }
+        self.titleImageView = nil;
+    }
+    else {
+        if (self.titleImageView == nil) {
+            UIImageView *view = [[UIImageView alloc] init];
+            self.titleImageView = view;
+            [self addSubview:view];
+        }
+        self.titleImageView.image = titleImage;
+        [self adjustSubview];
+    }    
 }
 
 -(void)setFrame:(CGRect)frame {
@@ -163,14 +191,16 @@
     if (self.isShowSubRuling) {
         [self drawSubRuling:&context];
     }
-    [self drawText:&context];
+    [self drawTitle:&context];
 }
 
--(void)drawText:(CGContextRef *)context {
-    NSDictionary *attributes = @{NSFontAttributeName:self.titleFont,
-                                 NSForegroundColorAttributeName:self.titleColor};
-    CGContextSetLineWidth(*context, _rulingWidth);
-    [self drawRulingText:context angle:M_PI_2 text:self.title attributes:attributes textScale:0.2];
+-(void)drawTitle:(CGContextRef *)context {
+    if (self.titleImage == nil) {
+        NSDictionary *attributes = @{NSFontAttributeName:self.titleFont,
+                                     NSForegroundColorAttributeName:self.titleColor};
+        CGContextSetLineWidth(*context, _rulingWidth);
+        [self drawRulingText:context angle:M_PI_2 text:self.title attributes:attributes textScale:0.2];
+    }
 }
 
 -(void)drawRuling:(CGContextRef *)context {
@@ -390,13 +420,14 @@
     UIGraphicsEndImageContext();
     // 返回新的改变大小后的图片
     return scaledImage;
-    
 }
 
 // 调整子视图位置
 -(void)adjustSubview {
-    self.needleView.frame = CGRectMake(_dialCenter.x - _radii, _dialCenter.y - _radii, 2 * _radii, 2 * _radii);
     self.valueLabel.frame = CGRectMake(_dialCenter.x - 0.25 * _radii, _dialCenter.y + 0.44 * _radii, 0.5 * _radii, 0.28 * _radii);
+    if (self.titleImageView != nil) {
+        self.titleImageView.frame = CGRectMake(_dialCenter.x - 0.12 * _radii, _dialCenter.y + 0.1 * _radii, 0.24 * _radii, 0.24 * _radii);
+    }
 }
 
 #pragma mark - 数值转换函数

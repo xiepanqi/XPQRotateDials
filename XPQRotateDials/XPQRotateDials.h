@@ -84,6 +84,8 @@
 @property (nonatomic, strong) IBInspectable UIColor *titleColor;
 /// 标题字体，默认[UIFont systemFontOfSize:20]
 @property (nonatomic, strong) UIFont *titleFont;
+/// 标题图片，如果标题设置了图片将只显示图片不显示文字，默认nil
+@property (nonatomic, strong) IBInspectable UIImage *titleImage;
 
 /*
  * @brief   值转化成指针对应的角度。
