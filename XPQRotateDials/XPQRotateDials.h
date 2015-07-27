@@ -75,7 +75,7 @@
 #pragma mark - 动画属性
 /// 是否启用指针转动动画，默认YES
 @property (nonatomic,getter=isAnimationEnable) IBInspectable BOOL animationEnable;
-/// 指针移动动画时间，默认1.0
+/// 指针移动动画时间，默认0.5
 @property (nonatomic) IBInspectable CGFloat animationTime;
 #pragma mark - 标题
 /// 表盘标题,默认nil

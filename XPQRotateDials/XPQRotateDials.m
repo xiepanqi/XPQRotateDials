@@ -73,7 +73,7 @@
     _warningValue = DBL_MAX;
     _warningWiggleEnable = YES;
     _animationEnable = YES;
-    _animationTime = 1.0;
+    _animationTime = 0.5;
     _titleColor = [UIColor whiteColor];
     _titleFont = [UIFont systemFontOfSize:20];
 }
