@@ -35,7 +35,6 @@
     self = [super initWithCoder:aDecoder];
     if (self) {
         [self configSelf];
-        [self adjustSubview];
     }
     return self;
 }
@@ -84,54 +83,47 @@
     valueLabel.textColor = [UIColor redColor];
     [self addSubview:valueLabel];
     self.valueLabel = valueLabel;
-    
-    UIImageView *needleView = [[UIImageView alloc] initWithImage:_needleImage];
-    needleView.frame = CGRectMake(_dialCenter.x - _radii, _dialCenter.y - _radii, 2 * _radii, 2 * _radii);
-    [self addSubview:needleView];
-    self.needleView = needleView;
 }
 
 #pragma mark -属性
 -(void)setNeedleImage:(UIImage *)needleImage {
     _needleImage = needleImage;
-    self.needleView.image = needleImage;
+    UIImageView *needleView = [[UIImageView alloc] initWithImage:_needleImage];
+    needleView.frame = CGRectMake(_dialCenter.x - _radii, _dialCenter.y - _radii, 2 * _radii, 2 * _radii);
+    [self addSubview:needleView];
+    self.needleView = needleView;
     self.value = self.minValue;
 }
 
 -(void)setBackgroundImage:(UIImage *)backgroundImage {
     _backgroundImage = backgroundImage;
     self.backgroundColor = [UIColor colorWithPatternImage:[self adjustImageSize:backgroundImage]];
+    NSLog(@"%s", __FUNCTION__);
 }
 
 -(void)setTitleImage:(UIImage *)titleImage {
     _titleImage = titleImage;
+    [self.titleImageView removeFromSuperview];
     if (titleImage == nil) {
-        if (self.titleImageView != nil) {
-            [self.titleImageView removeFromSuperview];
-        }
         self.titleImageView = nil;
     }
     else {
-        if (self.titleImageView == nil) {
-            UIImageView *view = [[UIImageView alloc] init];
-            self.titleImageView = view;
-            [self addSubview:view];
-        }
-        self.titleImageView.image = titleImage;
-        [self adjustSubview];
+        UIImageView *view = [[UIImageView alloc] initWithImage:titleImage];
+        self.titleImageView = view;
+        [self addSubview:view];
+        self.titleImageView.frame = CGRectMake(_dialCenter.x - 0.12 * _radii, _dialCenter.y + 0.1 * _radii, 0.24 * _radii, 0.24 * _radii);
     }    
 }
 
--(void)setFrame:(CGRect)frame {
-    [super setFrame:frame];
+-(void)setBounds:(CGRect)bounds {
+    [super setBounds:bounds];
     
     // 中心点
-    _dialCenter = CGPointMake(frame.size.width / 2, frame.size.height / 2);
+    _dialCenter = CGPointMake(bounds.size.width / 2, bounds.size.height / 2);
     // 半径
-    _radii = (frame.size.height < frame.size.width ? frame.size.height : frame.size.width) / 2;
+    _radii = (bounds.size.height < bounds.size.width ? bounds.size.height : bounds.size.width) / 2;
     // 根据图大小来计算刻度线宽度
     _rulingWidth = _radii / 50;
-    
     [self adjustSubview];
 }
 
@@ -428,9 +420,10 @@
 // 调整子视图位置
 -(void)adjustSubview {
     self.valueLabel.frame = CGRectMake(_dialCenter.x - 0.25 * _radii, _dialCenter.y + 0.44 * _radii, 0.5 * _radii, 0.28 * _radii);
-    if (self.titleImageView != nil) {
-        self.titleImageView.frame = CGRectMake(_dialCenter.x - 0.12 * _radii, _dialCenter.y + 0.1 * _radii, 0.24 * _radii, 0.24 * _radii);
-    }
+
+    self.titleImage = self.titleImage;
+    self.backgroundImage = self.backgroundImage;
+    self.needleImage = self.needleImage;
 }
 
 #pragma mark - 数值转换函数

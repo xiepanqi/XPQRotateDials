@@ -48,6 +48,7 @@
     
 //    self.rotateDials.needleImage = [UIImage imageNamed:@"needle_mph"];
 //    self.rotateDials.backgroundImage = [UIImage imageNamed:@"background"];
+    self.rotateDials.frame = CGRectMake(0, 0, 100, 100);
 }
 
 - (void)didReceiveMemoryWarning {

@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -30,18 +31,12 @@
                                     <action selector="textEditEnd:" destination="BYZ-38-t0r" eventType="editingDidEnd" id="sgE-Jf-B9g"/>
                                 </connections>
                             </textField>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rnq-KJ-i9M">
-                                <rect key="frame" x="43" y="476" width="54" height="30"/>
-                                <state key="normal" title="清零">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="clickButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Mly-r6-4Yj"/>
-                                </connections>
-                            </button>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="F2H-Ur-4bk" customClass="XPQRotateDials">
-                                <rect key="frame" x="26" y="46" width="256" height="341"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="F2H-Ur-4bk" customClass="XPQRotateDials">
+                                <rect key="frame" x="16" y="20" width="568" height="340"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="340" id="Eqw-ii-hdG"/>
+                                </constraints>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="minValue">
                                         <real key="value" value="0.0"/>
@@ -104,8 +99,22 @@
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="warningWiggleEnable" value="YES"/>
                                 </userDefinedRuntimeAttributes>
                             </view>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rnq-KJ-i9M">
+                                <rect key="frame" x="47" y="438" width="30" height="30"/>
+                                <state key="normal" title="清零">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="clickButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Mly-r6-4Yj"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="F2H-Ur-4bk" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="7Mg-NC-vGB"/>
+                            <constraint firstItem="F2H-Ur-4bk" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="8E4-10-jEh"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="F2H-Ur-4bk" secondAttribute="trailing" id="8ni-ZE-mKm"/>
+                        </constraints>
                     </view>
                     <connections>
                         <outlet property="rotateDials" destination="F2H-Ur-4bk" id="X13-jd-PAv"/>
