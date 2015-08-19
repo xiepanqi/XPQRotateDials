@@ -86,6 +86,15 @@
 @property (nonatomic, strong) UIFont *titleFont;
 /// 标题图片，如果标题设置了图片将只显示图片不显示文字，默认nil
 @property (nonatomic, strong) IBInspectable UIImage *titleImage;
+#pragma mark - 值属性
+/**
+ *  @brief  值文本颜色
+ */
+@property (nonatomic, strong) IBInspectable UIColor *valueColor;
+/**
+ *  @brief  值文本字体
+ */
+@property (nonatomic, strong) UIFont *valueFont;
 
 /*
  * @brief   值转化成指针对应的角度。

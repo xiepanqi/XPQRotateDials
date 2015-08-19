@@ -124,7 +124,22 @@
     _radii = (bounds.size.height < bounds.size.width ? bounds.size.height : bounds.size.width) / 2;
     // 根据图大小来计算刻度线宽度
     _rulingWidth = _radii / 50;
-    [self adjustSubview];
+    if (_rulingWidth > 0.1) {
+        [self adjustSubview];
+    }
+}
+
+-(void)setFrame:(CGRect)frame {
+    [super setFrame:frame];
+    // 中心点
+    _dialCenter = CGPointMake(frame.size.width / 2, frame.size.height / 2);
+    // 半径
+    _radii = (frame.size.height < frame.size.width ? frame.size.height : frame.size.width) / 2;
+    // 根据图大小来计算刻度线宽度
+    _rulingWidth = _radii / 50;
+    if (_rulingWidth > 0.1) {
+        [self adjustSubview];
+    }
 }
 
 -(void)setValue:(CGFloat)value {
@@ -161,6 +176,21 @@
 
 -(CGFloat)subValue {
     return [self subValueWithSubAngle:_needleAngle];
+}
+-(void)setValueColor:(UIColor *)valueColor {
+    self.valueLabel.textColor = valueColor;
+}
+
+-(UIColor *)valueColor {
+    return self.valueLabel.textColor;
+}
+
+-(void)setValueFont:(UIFont *)valueFont {
+    self.valueLabel.font = valueFont;
+}
+
+-(UIFont *)valueFont {
+    return self.valueLabel.font;
 }
 
 -(void)setNeedleAngle:(CGFloat)needleAngle {
