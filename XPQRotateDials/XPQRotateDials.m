@@ -81,6 +81,7 @@
     UILabel *valueLabel = [[UILabel alloc] init];
     valueLabel.textAlignment = NSTextAlignmentCenter;
     valueLabel.textColor = [UIColor redColor];
+    valueLabel.frame = CGRectMake(_dialCenter.x - 0.25 * _radii, _dialCenter.y + 0.44 * _radii, 0.5 * _radii, 0.28 * _radii);
     [self addSubview:valueLabel];
     self.valueLabel = valueLabel;
 }
