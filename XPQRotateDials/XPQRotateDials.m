@@ -92,6 +92,7 @@
     UIImageView *needleView = [[UIImageView alloc] initWithImage:_needleImage];
     needleView.frame = CGRectMake(_dialCenter.x - _radii, _dialCenter.y - _radii, 2 * _radii, 2 * _radii);
     [self addSubview:needleView];
+    [self.needleView removeFromSuperview];
     self.needleView = needleView;
     self.value = self.minValue;
 }
