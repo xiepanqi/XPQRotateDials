@@ -265,8 +265,11 @@
         default:
             break;
     }
-    // 画刻度文本
-    [self drawAllRulingText:context perAngle:angle warningIndex:ceil(warningIndex)];
+    
+    if (self.rulingStyle != XPQRulingStyleNone) {
+        // 画刻度文本
+        [self drawAllRulingText:context perAngle:angle warningIndex:ceil(warningIndex)];
+    }
 }
 
 -(void)drawSubRuling:(CGContextRef *)context {
@@ -299,7 +302,10 @@
             break;
     }
 
-    [self drawAllSubRulingText:context perAngle:angle];
+    if (self.subRulingStyle != XPQRulingStyleNone) {
+        // 画刻度文本
+        [self drawAllSubRulingText:context perAngle:angle];
+    }
 }
 
 /**

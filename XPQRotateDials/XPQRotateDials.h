@@ -9,10 +9,18 @@
 #import <UIKit/UIKit.h>
 
 typedef enum : NSUInteger {
+    /// 只有刻度线和值
     XPQRulingStyleLine,
+    /// 只有刻度点和值
     XPQRulingStylePoint,
+    /// 刻度线、刻度点、值
     XPQRulingStyleLineAndPoint,
+    /// 刻度线、外圈、值
     XPQRulingStyleCycline,
+    /// 只有值，用于当背景有刻度的时候
+    XPQRulingStyleOnlyText,
+    /// 刻度和值都没有，用于背景有刻度和值的时候
+    XPQRulingStyleNone,
 } XPQRulingStyle;
 
 @interface XPQRotateDials : UIView
