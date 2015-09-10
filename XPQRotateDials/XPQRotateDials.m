@@ -59,6 +59,7 @@
     _rulingStartAngle = -225.0;
     _rulingStopAngle = 45.0;
     _rulingCount = 10;
+    _rulingStyle = XPQRulingStyleLineAndPoint;
     _rulingTextColor = [UIColor blackColor];
     _rulingTextFont = [UIFont systemFontOfSize:20];
     _showSubRuling = YES;
@@ -67,6 +68,7 @@
     _subRulingStartAngle = -225.0;
     _subRulingStopAngle = 45.0;
     _subRulingCount = 10;
+    _subRulingStyle = XPQRulingStyleLineAndPoint;
     _subRulingTextColor = [UIColor blackColor];
     _subRulingTextFont = [UIFont systemFontOfSize:10];
     _warningValue = DBL_MAX;
@@ -237,62 +239,84 @@
     CGFloat warningAngle = [self angleWithValue:self.warningValue];
     CGFloat warningIndex = (warningAngle - self.rulingStartAngle) / angle;
     
-    // 画刻度线
-    [self drawAllRulingLine:context perAngle:angle warningIndex:ceil(warningIndex)];
-    // 画刻度点
-    [self drawAllRulingPoint:context perAngle:angle warningIndex:ceil(warningIndex)];
+    switch (self.rulingStyle) {
+        case XPQRulingStyleLine:
+            // 画刻度线
+            [self drawAllRulingLine:context startAngle:self.rulingStartAngle perAngle:angle warningIndex:ceil(warningIndex)];
+            break;
+        
+        case XPQRulingStylePoint:
+            // 画刻度点
+            [self drawAllRulingPoint:context startAngle:self.rulingStartAngle perAngle:angle warningIndex:ceil(warningIndex)];
+            break;
+            
+        case XPQRulingStyleLineAndPoint:
+            // 画刻度线
+            [self drawAllRulingLine:context startAngle:self.rulingStartAngle perAngle:angle warningIndex:ceil(warningIndex)];
+            // 画刻度点
+            [self drawAllRulingPoint:context startAngle:(self.rulingStartAngle + angle / 2) perAngle:angle warningIndex:ceil(warningIndex)];
+            break;
+            
+        case XPQRulingStyleCycline:
+            // 画刻度线
+            [self drawAllRulingLine:context startAngle:self.rulingStartAngle perAngle:angle warningIndex:ceil(warningIndex)];
+            [self drawClc:context startAngle:self.rulingStartAngle endAngle:self.rulingStopAngle color:self.rulingLineColor lineWith:_rulingWidth scale:0.85];
+            break;
+        default:
+            break;
+    }
     // 画刻度文本
     [self drawAllRulingText:context perAngle:angle warningIndex:ceil(warningIndex)];
 }
 
 -(void)drawSubRuling:(CGContextRef *)context {
-    static const float lineStartScale = 0.45;
-    static const float lineEndScale = 0.40;
-    static const float pointScale = 0.425;
-    static const float textScale = 0.32;
-    
     // 刻度之间的角度
     CGFloat angle = (self.subRulingStopAngle - self.subRulingStartAngle) / self.subRulingCount;
-    NSDictionary *attributes = @{NSFontAttributeName:self.subRulingTextFont, NSForegroundColorAttributeName:self.subRulingTextColor};
-    
-    CGContextSetStrokeColorWithColor(*context, self.subRulingColor.CGColor);
-    CGContextSetFillColorWithColor(*context, self.subRulingColor.CGColor);
-    CGContextSetLineWidth(*context, _rulingWidth / 2);
-    for (int i = 0; i <= self.subRulingCount; i++) {
-        [self drawRulingLine:context angle:((self.rulingStartAngle + i * angle) * M_PI / 180) pathStartScale:lineStartScale pathEndScale:lineEndScale];
+    switch (self.subRulingStyle) {
+        case XPQRulingStyleLine:
+            // 画刻度线
+            [self drawAllSubRulingLine:context startAngle:self.subRulingStartAngle perAngle:angle];
+            break;
+            
+        case XPQRulingStylePoint:
+            // 画刻度点
+            [self drawAllSubRulingPoint:context startAngle:self.subRulingStartAngle perAngle:angle];
+            break;
+            
+        case XPQRulingStyleLineAndPoint:
+            // 画刻度线
+            [self drawAllSubRulingLine:context startAngle:self.subRulingStartAngle perAngle:angle];
+            // 画刻度点
+            [self drawAllSubRulingPoint:context startAngle:(self.subRulingStartAngle + angle / 2) perAngle:angle];
+            break;
+            
+        case XPQRulingStyleCycline:
+            // 画刻度线
+            [self drawAllSubRulingLine:context startAngle:self.subRulingStartAngle perAngle:angle];
+            [self drawClc:context startAngle:self.subRulingStartAngle endAngle:self.subRulingStopAngle color:self.subRulingColor lineWith:_rulingWidth / 2 scale:0.45];
+            break;
+        default:
+            break;
     }
-    CGContextStrokePath(*context);
-    
-    CGFloat startAngle = self.subRulingStartAngle + angle / 2;
-    for (int i = 0; i < self.subRulingCount; i++) {
-        [self drawRulingPoint:context angle:((startAngle + i * angle) * M_PI / 180) pointSize:_rulingWidth / 2 pathScale:pointScale];
-    }
-    CGContextStrokePath(*context);
-    
-    // 单位
-    [self drawRulingText:context angle:((self.subRulingStartAngle - angle / 2) * M_PI / 180) text:self.subRulingUnit attributes:attributes textScale:pointScale];
-    
-    for (int i = 0; i <= self.subRulingCount && i < self.subRulingText.count; i++) {
-        [self drawRulingText:context angle:((self.subRulingStartAngle + i * angle) * M_PI / 180) text:self.subRulingText[i] attributes:attributes textScale:textScale];
-    }
-    CGContextStrokePath(*context);
+
+    [self drawAllSubRulingText:context perAngle:angle];
 }
 
 /**
  *  @brief  画所有的主圈刻度线
- *  @param  center  画布中心点
- *  @param  radii   半径
- *  @param  perAngle    刻度线之间角度差
- *  @param  warningIndex    警告值开始的索引
+ *  @param context      画布环境指针
+ *  @param startAngle   开始角度
+ *  @param angle        刻度线之间角度差
+ *  @param warningIndex 警告值开始的索引
  */
--(void)drawAllRulingLine:(CGContextRef *)context perAngle:(CGFloat)angle warningIndex:(int)warningIndex {
+-(void)drawAllRulingLine:(CGContextRef *)context startAngle:(CGFloat)startAngle perAngle:(CGFloat)angle warningIndex:(int)warningIndex {
     static const float pathStartScale = 0.85;
     static const float pathEndScale = 0.73;
     
     CGContextSetStrokeColorWithColor(*context, self.rulingLineColor.CGColor);
     CGContextSetLineWidth(*context, _rulingWidth);
     for (int i = 0; i <= self.rulingCount && i < warningIndex; i++) {
-        [self drawRulingLine:context angle:((self.rulingStartAngle + i * angle) * M_PI / 180) pathStartScale:pathStartScale pathEndScale:pathEndScale];
+        [self drawRulingLine:context angle:((startAngle + i * angle) * M_PI / 180) pathStartScale:pathStartScale pathEndScale:pathEndScale];
     }
     CGContextStrokePath(*context);
     // 警告值后的刻度
@@ -300,7 +324,7 @@
         CGContextSetStrokeColorWithColor(*context, [UIColor redColor].CGColor);
         CGContextSetLineWidth(*context, _rulingWidth);
         for (int i = warningIndex; i <= self.rulingCount; i++) {
-            [self drawRulingLine:context angle:((self.rulingStartAngle + i * angle) * M_PI / 180) pathStartScale:pathStartScale pathEndScale:pathEndScale];
+            [self drawRulingLine:context angle:((startAngle + i * angle) * M_PI / 180) pathStartScale:pathStartScale pathEndScale:pathEndScale];
         }
         CGContextStrokePath(*context);
     }
@@ -308,16 +332,15 @@
 
 /**
  *  @brief  画所有的主圈刻度点
- *  @param  center  画布中心点
- *  @param  radii   半径
- *  @param  perAngle    刻度线之间角度差
- *  @param  warningIndex    警告值开始的索引
+ *  @param context      画布环境指针
+ *  @param startAngle   开始角度
+ *  @param angle        刻度线之间角度差
+ *  @param warningIndex 警告值开始的索引
  */
--(void)drawAllRulingPoint:(CGContextRef *)context perAngle:(CGFloat)angle warningIndex:(int)warningIndex {
+-(void)drawAllRulingPoint:(CGContextRef *)context startAngle:(CGFloat)startAngle perAngle:(CGFloat)angle warningIndex:(int)warningIndex {
     static const float pathScale = 0.82;
     
     CGContextSetFillColorWithColor(*context, self.rulingPointColor.CGColor);
-    CGFloat startAngle = self.rulingStartAngle + angle / 2;
     for (int i = 0; i < self.rulingCount && i < warningIndex; i++) {
         [self drawRulingPoint:context angle:((startAngle + i * angle) * M_PI / 180) pointSize:_rulingWidth pathScale:pathScale];
     }
@@ -372,6 +395,62 @@
     }
 }
 
+
+/**
+ *  @brief  画所有的次圈刻度线
+ *  @param context      画布环境指针
+ *  @param startAngle   开始角度
+ *  @param angle        刻度线之间角度差
+ */
+-(void)drawAllSubRulingLine:(CGContextRef *)context startAngle:(CGFloat)startAngle perAngle:(CGFloat)angle {
+    static const float lineStartScale = 0.45;
+    static const float lineEndScale = 0.40;
+    
+    CGContextSetStrokeColorWithColor(*context, self.subRulingColor.CGColor);
+    CGContextSetLineWidth(*context, _rulingWidth / 2);
+    for (int i = 0; i <= self.subRulingCount; i++) {
+        [self drawRulingLine:context angle:((startAngle + i * angle) * M_PI / 180) pathStartScale:lineStartScale pathEndScale:lineEndScale];
+    }
+    CGContextStrokePath(*context);
+}
+
+/**
+ *  @brief  画所有的次圈刻度点
+ *  @param context      画布环境指针
+ *  @param startAngle   开始角度
+ *  @param angle        刻度线之间角度差
+ */
+-(void)drawAllSubRulingPoint:(CGContextRef *)context startAngle:(CGFloat)startAngle perAngle:(CGFloat)angle {
+    static const float pointScale = 0.425;
+    
+    CGContextSetFillColorWithColor(*context, self.subRulingColor.CGColor);
+    for (int i = 0; i < self.subRulingCount; i++) {
+        [self drawRulingPoint:context angle:((startAngle + i * angle) * M_PI / 180) pointSize:_rulingWidth / 2 pathScale:pointScale];
+    }
+    CGContextStrokePath(*context);
+}
+
+/**
+ *  @brief  画所有的次圈刻度文本
+ *  @param  center  画布中心点
+ *  @param  radii   半径
+ *  @param  perAngle    刻度线之间角度差
+ */
+-(void)drawAllSubRulingText:(CGContextRef *)context perAngle:(CGFloat)angle {
+    static const float textScale = 0.32;
+    
+    CGContextSetLineWidth(*context, _rulingWidth / 2);
+    NSDictionary *attributes = @{NSFontAttributeName:self.subRulingTextFont, NSForegroundColorAttributeName:self.subRulingTextColor};
+    // 单位
+    [self drawRulingText:context angle:((self.subRulingStartAngle - angle / 2) * M_PI / 180) text:self.subRulingUnit attributes:attributes textScale:0.425];
+    CGContextStrokePath(*context);
+    
+    for (int i = 0; i <= self.subRulingCount && i < self.subRulingText.count; i++) {
+        [self drawRulingText:context angle:((self.rulingStartAngle + i * angle) * M_PI / 180) text:self.subRulingText[i] attributes:attributes textScale:textScale];
+    }
+    CGContextStrokePath(*context);
+}
+
 /**
  *  @brief  画刻度线
  *  @param  context 上下文环境
@@ -382,9 +461,9 @@
  *  @param  pathEndScale    pathStartScale必须大于pathEndScale，不然会有误差
  */
 - (void)drawRulingLine:(CGContextRef *)context angle:(CGFloat)angle pathStartScale:(CGFloat)pathStartScale pathEndScale:(CGFloat)pathEndScale {
-    // 因为画线的点是画线的左侧点，会有一点偏差，这里纠正过来
-    CGFloat offset = asin((_rulingWidth / 2) / (pathStartScale * _radii));
-    angle += offset;
+//    // 因为画线的点是画线的左侧点，会有一点偏差，这里纠正过来
+//    CGFloat offset = asin((_rulingWidth / 2) / (pathStartScale * _radii));
+//    angle += offset;
     
     // 计算刻度线两端的点
     // 计算公式为：所在比例 * cos或者sin * 半径 + 中心点x或者y
@@ -432,6 +511,14 @@
     CGFloat y = textScale * sin(angle) * _radii + _dialCenter.y - textSize.height / 2;
     
     [text drawAtPoint:CGPointMake(x, y) withAttributes:attributes];
+}
+
+-(void)drawClc:(CGContextRef *)context startAngle:(CGFloat)startAngle endAngle:(CGFloat)endAngle color:(UIColor *)color lineWith:(CGFloat)lineWith scale:(CGFloat)scale {
+    CGContextSetLineWidth(*context, lineWith);
+    CGContextSetStrokeColorWithColor(*context, color.CGColor);
+    CGFloat radius = _radii * scale;
+    CGContextAddArc(*context, _dialCenter.x, _dialCenter.y, radius, startAngle * M_PI / 180, endAngle * M_PI / 180, NO);
+    CGContextStrokePath(*context);
 }
 
 #pragma mark -辅助函数

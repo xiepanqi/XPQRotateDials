@@ -8,6 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
+typedef enum : NSUInteger {
+    XPQRulingStyleLine,
+    XPQRulingStylePoint,
+    XPQRulingStyleLineAndPoint,
+    XPQRulingStyleCycline,
+} XPQRulingStyle;
+
 @interface XPQRotateDials : UIView
 /// 最小值,默认0.0
 @property (nonatomic) IBInspectable CGFloat minValue;
@@ -31,6 +38,8 @@
 @property (nonatomic, strong) IBInspectable UIColor *rulingPointColor;
 /// 刻度文字颜色，默认黑色
 @property (nonatomic, strong) IBInspectable UIColor *rulingTextColor;
+/// 刻度样式，默认rulingStyleLineAndPoint
+@property (nonatomic) XPQRulingStyle rulingStyle;
 /// 刻度文字字体，默认[UIFont systemFontOfSize:20]
 @property (nonatomic, strong) UIFont *rulingTextFont;
 /// 文本数组，默认为nil
@@ -61,6 +70,8 @@
 @property (nonatomic, strong) IBInspectable UIColor *subRulingColor;
 /// 内圈刻度文字颜色，默认黑色
 @property (nonatomic, strong) IBInspectable UIColor *subRulingTextColor;
+/// 内圈刻度样式，默认rulingStyleLineAndPoint
+@property (nonatomic) XPQRulingStyle subRulingStyle;
 /// 内圈刻度文字字体，默认[UIFont systemFontOfSize:10]
 @property (nonatomic, strong) UIFont *subRulingTextFont;
 /// 内圈刻度文本数组，默认为nil
