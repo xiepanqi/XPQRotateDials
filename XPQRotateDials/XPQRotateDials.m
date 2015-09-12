@@ -210,7 +210,7 @@
     // 因为指针指向上，所以要偏90度
     CGFloat oldAngle = _needleAngle + 90;
     _needleAngle = needleAngle;
-    needleAngle += 90;
+    needleAngle += (90 + _needleAngleOffset);
     
     if (self.animationEnable) {
         [self rotateAnimationWithAngle:oldAngle toAngle:needleAngle];

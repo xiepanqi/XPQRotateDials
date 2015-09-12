@@ -41,14 +41,16 @@
     
 //    self.rotateDials.subRulingStartAngle = -225.0;
     self.rotateDials.subRulingStopAngle = [self.rotateDials angleWithValue:136.7];
-//    self.rotateDials.subRulingCount = 11;
-//    self.rotateDials.subRulingColor = [UIColor colorWithRed:0.261 green:0.866 blue:0.824 alpha:1.0];
-//    self.rotateDials.subRulingTextColor = [UIColor colorWithRed:0.261 green:0.866 blue:0.824 alpha:1.0];
+    self.rotateDials.subRulingCount = 11;
+    self.rotateDials.subRulingColor = [UIColor colorWithRed:0.261 green:0.866 blue:0.824 alpha:1.0];
+    self.rotateDials.subRulingTextColor = [UIColor colorWithRed:0.261 green:0.866 blue:0.824 alpha:1.0];
     self.rotateDials.subRulingText = @[@"0", @"20", @"40", @"60", @"80", @"100", @"120", @"140", @"160", @"180", @"200", @"220"];
+    self.rotateDials.subRulingStyle = XPQRulingStyleCycline;
     
-//    self.rotateDials.needleImage = [UIImage imageNamed:@"needle_mph"];
-//    self.rotateDials.backgroundImage = [UIImage imageNamed:@"background"];
-    self.rotateDials.frame = CGRectMake(0, 0, 100, 100);
+    self.rotateDials.needleImage = [UIImage imageNamed:@"needle_mph"];
+    self.rotateDials.backgroundImage = [UIImage imageNamed:@"background"];
+    self.rotateDials.needleAngleOffset = -0.45;
+//    self.rotateDials.frame = CGRectMake(0, 0, 100, 100);
 }
 
 - (void)didReceiveMemoryWarning {
@@ -66,6 +68,7 @@
 }
 - (IBAction)clickButton:(id)sender {
     self.rotateDials.value = 0;
+    self.rotateDials.frame = CGRectOffset(self.rotateDials.frame, -10, -10);
 }
 
 @end

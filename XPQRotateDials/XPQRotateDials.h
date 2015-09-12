@@ -90,6 +90,8 @@ typedef enum : NSUInteger {
 @property (nonatomic, strong) IBInspectable UIImage *needleImage;
 /// 指针锚点,默认(0.5, 0.5)
 @property (nonatomic) CGPoint needleAnchorPoint;
+/// 指针角度偏移，默认0.0
+@property (nonatomic) CGFloat needleAngleOffset;
 /// 背景图片,默认nil
 @property (nonatomic, strong) IBInspectable UIImage *backgroundImage;
 
