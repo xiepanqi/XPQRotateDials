@@ -77,6 +77,7 @@
     _animationTime = 0.5;
     _titleColor = [UIColor whiteColor];
     _titleFont = [UIFont systemFontOfSize:20];
+    _needleAnchorPoint = CGPointMake(0.5, 0.5);
 }
 
 -(void)configSubview {
@@ -96,7 +97,15 @@
     [self addSubview:needleView];
     [self.needleView removeFromSuperview];
     self.needleView = needleView;
+    self.needleView.layer.anchorPoint = self.needleAnchorPoint;
     self.value = self.minValue;
+}
+
+-(void)setNeedleAnchorPoint:(CGPoint)needleAnchorPoint {
+    _needleAnchorPoint = needleAnchorPoint;
+    if (self.needleView) {
+        self.needleView.layer.anchorPoint = needleAnchorPoint;
+    }
 }
 
 -(void)setBackgroundImage:(UIImage *)backgroundImage {

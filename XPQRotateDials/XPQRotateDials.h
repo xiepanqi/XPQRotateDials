@@ -88,6 +88,8 @@ typedef enum : NSUInteger {
 #pragma mark - 指针属性
 /// 指针图片，默认nil
 @property (nonatomic, strong) IBInspectable UIImage *needleImage;
+/// 指针锚点,默认(0.5, 0.5)
+@property (nonatomic) CGPoint needleAnchorPoint;
 /// 背景图片,默认nil
 @property (nonatomic, strong) IBInspectable UIImage *backgroundImage;
 
